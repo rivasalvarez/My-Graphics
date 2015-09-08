@@ -1,27 +1,19 @@
-A simple example of matrix use in OpenGL
-========================================
+This is an extension to PA1 adding User Input to control the roatation of the cube
+The inputs include keyboard, mouse, and menu
 
-Building This Example
----------------------
+The Keyboard inputs are:
+a makes it rotate clockwise
+s makes it stop rotating
+d makes it rotate counter clockwise
+r makes it reverse rotation
+esc makes the program terminate
 
-*This example requires GLM*
-*On ubuntu it can be installed with this command*
+The Mouse inputs are:
+Left Click makes it reverse rotation
+Right Click makes it the menu pop up
 
->$ sudo apt-get install libglm-dev
-
-*On a Mac you can install GLM with this command(using homebrew)*
->$ brew install glm
-
-To build this example just 
-
->$ cd build
->$ make
-
-*If you are using a Mac you will need to edit the makefile in the build directory*
-
-The excutable will be put in bin
-
-Additional Notes For OSX Users
-------------------------------
-
-Ensure that the latest version of the Developer Tools is installed.
+The Menu options include:
+Quit program
+Start Rotation
+Stop Rotation
+Reverse Rotation
