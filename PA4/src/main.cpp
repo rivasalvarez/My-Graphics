@@ -1,4 +1,4 @@
-using namespace std;  
+using namespace std;    
 #include <GL/glew.h> // glew must be included before the main gl libs
 #include <GL/glut.h> // doing otherwise causes compiler shouting
 #include <iostream>
@@ -7,6 +7,7 @@ using namespace std;
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp> //Makes passing matrices to shaders easier
+#include <vector>
 #include "Shader.h"
 #include "UI.cpp"
 
@@ -24,34 +25,30 @@ GLuint program;// The GLSL program handle
 GLuint vbo_geometry;// VBO handle for our geometry
 
 //uniform locations
-GLint loc_earthMvp;// Location of the modelviewprojection matrix in the shader
-GLint loc_moonMvp;
- 
+GLint loc_mvpmat;// Location of the modelviewprojection matrix in the shader 
 
 //attribute locations
-GLint loc_earth;
-GLint loc_moon;
+GLint loc_position;
 GLint loc_color;
-GLint loc_color1;
+int NUM_FACES = 0;
 
 //transform matrices
-glm::mat4 earth;//obj->world each object should have its own model matrix
-glm::mat4 moon;
+glm::mat4 model;//obj->world each object should have its own model matrix
 glm::mat4 view;//world->eye
 glm::mat4 projection;//eye->clip
-glm::mat4 earthMvp;//premultiplied modelviewprojection
-glm::mat4 moonMvp;
+glm::mat4 mvp;//premultiplied modelviewprojection
+
+vector<glm::vec3> vertices;
 
 //--GLUT Callbacks
 void render();
 void update();
 void reshape(int n_w, int n_h);
-void screenText(float,float,char*);
+bool loadOBJ(const char*, vector<glm::vec3>& );
 
 //--Resource management
 bool initialize();
 void cleanUp(); 
-
 //--Random time things
 float getDT();
 std::chrono::time_point<std::chrono::high_resolution_clock> t1,t2;
@@ -105,21 +102,20 @@ void render()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     //premultiply the matrix for this example
-    earthMvp = projection * view * earth;
-    moonMvp = projection * view * moon;
+    mvp = projection * view * model;
 
     //enable the shader program
     glUseProgram(program);
 
     //upload the matrix to the shader
-    glUniformMatrix4fv(loc_earthMvp, 1, GL_FALSE, glm::value_ptr(earthMvp));
+    glUniformMatrix4fv(loc_mvpmat, 1, GL_FALSE, glm::value_ptr(mvp));
 
     //set up the Vertex Buffer Object so it can be drawn
-    glEnableVertexAttribArray(loc_earth);
+    glEnableVertexAttribArray(loc_position);
     glEnableVertexAttribArray(loc_color);
     glBindBuffer(GL_ARRAY_BUFFER, vbo_geometry);
     //set pointers into the vbo for each of the attributes(position and color)
-    glVertexAttribPointer( loc_earth,//location of attribute
+    glVertexAttribPointer( loc_position,//location of attribute
                            3,//number of elements
                            GL_FLOAT,//type
                            GL_FALSE,//normalized?
@@ -133,87 +129,25 @@ void render()
                            sizeof(Vertex),
                            (void*)offsetof(Vertex,color));
 
-    glDrawArrays(GL_TRIANGLES, 0, 36);//mode, starting index, count
+    glDrawArrays(GL_TRIANGLES, 0, NUM_FACES*3);//mode, starting index, count
 
     //clean up
-    glDisableVertexAttribArray(loc_earth);
+    glDisableVertexAttribArray(loc_position);
     glDisableVertexAttribArray(loc_color);
-
-
-
-
-
-  //upload the matrix to the shader
-    glUniformMatrix4fv(loc_moonMvp, 1, GL_FALSE, glm::value_ptr(moonMvp));
-
-    //set up the Vertex Buffer Object so it can be drawn
-    glEnableVertexAttribArray(loc_moon);
-    glEnableVertexAttribArray(loc_color1);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo_geometry);
-    //set pointers into the vbo for each of the attributes(position and color)
-    glVertexAttribPointer( loc_moon,//location of attribute
-                           3,//number of elements
-                           GL_FLOAT,//type
-                           GL_FALSE,//normalized?
-                           sizeof(Vertex),//stride
-                           0);//offset
-
-    glVertexAttribPointer( loc_color,
-                           3,
-                           GL_FLOAT,
-                           GL_FALSE,
-                           sizeof(Vertex),
-                           (void*)offsetof(Vertex,color));
-
-    glDrawArrays(GL_TRIANGLES, 0, 36);//mode, starting index, count
-
-    //clean up
-    glDisableVertexAttribArray(loc_moon);
-    glDisableVertexAttribArray(loc_color);
-
-    const char* titleMms = message.c_str();
-    const char* titleMms1 = message1.c_str();
-    screenText(-.99 , .9 , titleMms);
-    screenText(-.99 , .8 , titleMms1);
-
+                           
     //swap the buffers
     glutSwapBuffers();
 }
 
-void update() 
+void update()
 {
-    //total time 
+    //total time
     static float angle = 0.0;
-    static float moonAngle = 0.0;
-    static float moonRA = 0.0;
     float dt = getDT();// if you have anything moving, use dt.
-    
-    moonRA    += dt * M_PI/2;
-    moonAngle += dt * M_PI/2;
 
-    if (OrbitClock){      
-       angle += dt * M_PI/2; //move through 90 degrees a second
-    }
+    angle += dt * M_PI/2; //move through 90 degrees a second
 
-    else{            
-        angle -= dt * M_PI/2;
-    }
-
-    if (RotationClock){
-       rotAng += check * dt * M_PI/2;
-
-    }
-
-    else{                 
-       rotAng -= check * dt * M_PI/2;
-    }
-
-    earth = glm::translate( glm::mat4(1.0f), glm::vec3(4.0 * sin(angle), 0.0, 4.0 * cos(angle)));
-    moon = glm::translate( earth, glm::vec3(4.0 * sin(5*moonAngle), 0.0, 4.0 * cos(5*moonAngle)));
-
-    moon = glm::rotate (moon, 4*moonRA, glm::vec3(0.0,4.0,0.0));
-    earth = glm::rotate (earth, rotAng, glm::vec3(0.0,2.0,0.0));
-
+    model = glm::rotate (glm::mat4(1.0) , angle, glm::vec3(0.0,1.0, 0.0));
 
     // Update the state of the scene
     glutPostRedisplay();//call the display callback
@@ -239,59 +173,15 @@ bool initialize()
     // Initialize basic geometry and shaders for this example
     //this defines a cube, this is why a model loader is nice
     //you can also do this with a draw elements and indices, try to get that working
-    Vertex geometry[] = { {{-1.0, -1.0, -1.0}, {0.0, 1.0, 1.0}},
-                          {{-1.0, -1.0, 1.0}, {0.0, 1.0, 1.0}},
-                          {{-1.0, 1.0, 1.0}, {0.0, 1.0, 1.0}},
-
-                          {{1.0, 1.0, -1.0}, {0.0, 1.0, 0.0}},
-                          {{-1.0, -1.0, -1.0}, {0.0, 1.0, 1.0}},
-                          {{-1.0, 1.0, -1.0}, {0.0, 1.0, 1.0}},
-                          
-                          {{1.0, -1.0, 1.0}, {0.0, 1.0, 1.0}},
-                          {{-1.0, -1.0, -1.0}, {0.0, 1.0, 1.0}},
-                          {{1.0, -1.0, -1.0}, {0.0, 1.0, 1.0}},
-                          
-                          {{1.0, 1.0, -1.0}, {0.0, 1.0, 1.0}},
-                          {{1.0, -1.0, -1.0}, {0.0, 1.0, 1.0}},
-                          {{-1.0, -1.0, -1.0}, {0.0, 1.0, 1.0}},
-
-                          {{-1.0, -1.0, -1.0}, {0.0, 1.0, 1.0}},
-                          {{-1.0, 1.0, 1.0}, {0.0, 1.0, 1.0}},
-                          {{-1.0, 1.0, -1.0}, {0.0, 1.0, 1.0}},
-
-                          {{1.0, -1.0, 1.0}, {0.0, 1.0, 1.0}},
-                          {{-1.0, -1.0, 1.0}, {0.0, 1.0, 1.0}},
-                          {{-1.0, -1.0, -1.0}, {0.0, 1.0, 1.0}},
-
-                          {{-1.0, 1.0, 1.0}, {0.0, 1.0, 1.0}},
-                          {{-1.0, -1.0, 1.0}, {0.0, 1.0, 1.0}},
-                          {{1.0, -1.0, 1.0}, {0.0, 1.0, 1.0}},
-                          
-                          {{1.0, 1.0, 1.0}, {0.0, 1.0, 1.0}},
-                          {{1.0, -1.0, -1.0}, {0.0, 1.0, 1.0}},
-                          {{1.0, 1.0, -1.0}, {0.0, 1.0, 1.0}},
-
-                          {{1.0, -1.0, -1.0}, {0.0, 1.0, 1.0}},
-                          {{1.0, 1.0, 1.0}, {0.0, 1.0, 1.0}},
-                          {{1.0, -1.0, 1.0}, {0.0, 1.0, 1.0}},
-
-                          {{1.0, 1.0, 1.0}, {0.0, 1.0, 1.0}},
-                          {{1.0, 1.0, -1.0}, {0.0, 1.0, 1.0}},
-                          {{-1.0, 1.0, -1.0}, {0.0, 1.0, 1.0}},
-
-                          {{1.0, 1.0, 1.0}, {0.0, 1.0, 1.0}},
-                          {{-1.0, 1.0, -1.0}, {0.0, 1.0, 1.0}},
-                          {{-1.0, 1.0, 1.0}, {0.0, 1.0, 1.0}},
-
-                          {{1.0, 1.0, 1.0}, {0.0, 1.0, 1.0}},
-                          {{-1.0, 1.0, 1.0}, {0.0, 1.0, 1.0}},
-                          {{1.0, -1.0, 1.0}, {0.0, 1.0, 1.0}}
-                        };
-
     // Create a Vertex Buffer object to store this vertex info on the GPU  
+
+    loadOBJ("model.obj", vertices);
+
+
     glGenBuffers(1, &vbo_geometry);
     glBindBuffer(GL_ARRAY_BUFFER, vbo_geometry);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(geometry), geometry, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), &vertices[0], GL_STATIC_DRAW);
+
 
     //--Geometry done
 
@@ -315,7 +205,6 @@ bool initialize()
     glCompileShader(vertex_shader);
     //check the compile status
     glGetShaderiv(vertex_shader, GL_COMPILE_STATUS, &shader_status);
-
     if(!shader_status)
     {
         std::cerr << "[F] FAILED TO COMPILE VERTEX SHADER!" << std::endl;
@@ -327,7 +216,6 @@ bool initialize()
     glCompileShader(fragment_shader);
     //check the compile status
     glGetShaderiv(fragment_shader, GL_COMPILE_STATUS, &shader_status);
-
     if(!shader_status)
     {
         std::cerr << "[F] FAILED TO COMPILE FRAGMENT SHADER!" << std::endl;
@@ -350,12 +238,9 @@ bool initialize()
 
     //Now we set the locations of the attributes and uniforms
     //this allows us to access them easily while rendering
-    loc_earth = glGetAttribLocation(program,
+    loc_position = glGetAttribLocation(program,
                     const_cast<const char*>("v_position"));
-    loc_moon = glGetAttribLocation(program,
-                    const_cast<const char*>("v_position"));
-
-    if(loc_earth == -1)
+    if(loc_position == -1)
     {
         std::cerr << "[F] POSITION NOT FOUND" << std::endl;
         return false;
@@ -363,27 +248,17 @@ bool initialize()
 
     loc_color = glGetAttribLocation(program,
                     const_cast<const char*>("v_color"));
-    loc_color1 = glGetAttribLocation(program,
-                    const_cast<const char*>("v_color"));
     if(loc_color == -1)
     {
         std::cerr << "[F] V_COLOR NOT FOUND" << std::endl;
         return false;
     }
 
-    loc_earthMvp = glGetUniformLocation(program,
+    loc_mvpmat = glGetUniformLocation(program,
                     const_cast<const char*>("mvpMatrix"));
-
-    loc_moonMvp = glGetUniformLocation(program, 
-                    const_cast<const char*>("mvpMatrix"));
-    if(loc_earthMvp == -1)
+    if(loc_mvpmat == -1)
     {
         std::cerr << "[F] MVPMATRIX NOT FOUND" << std::endl;
-        return false;
-    }
-    if(loc_moonMvp == -1)
-    {
-        std::cerr << "[F] MVP Moon MATRIX NOT FOUND" << std::endl;
         return false;
     }
     
@@ -425,3 +300,54 @@ float getDT()
     return ret;
 }
 
+bool loadOBJ(const char* path, vector<glm::vec3>& out_vertices){
+vector<unsigned int> vertexIndices;
+vector<glm::vec3> temp_vertices;
+
+FILE* file = fopen(path, "r");
+
+   if(file == NULL){
+   cout << "OBJ not Opened" << endl;
+   return false;
+   }
+
+   while(1){
+   char lineHeader[128];
+   int res = fscanf(file, "%s", lineHeader);
+     
+      if(res == EOF)  break;
+
+      if ( strcmp( lineHeader, "v") == 0){
+      glm::vec3 vertex;
+      fscanf(file, "%f %f %f\n", &vertex.x, &vertex.y, &vertex.z);
+      temp_vertices.push_back(vertex);
+      }
+
+      else if( strcmp( lineHeader, "f") == 0){
+      NUM_FACES++;
+      string vertex1, vertex2, vertex3;
+      unsigned int vertexIndex[3], normalIndex[3];
+      fscanf(file, "%d//%d %d//%d %d//%d\n", &vertexIndex[0], &normalIndex[0], 
+                          &vertexIndex[1], &normalIndex[1],
+                          &vertexIndex[2], &normalIndex[2] );
+
+
+       vertexIndices.push_back(vertexIndex[0]);
+       vertexIndices.push_back(vertexIndex[1]);
+       vertexIndices.push_back(vertexIndex[2]);
+      }
+
+   }
+
+   for(unsigned int i = 0; i <vertexIndices.size(); i++){
+   unsigned int vertexIndex = vertexIndices[i];
+   float change = 1.0;
+   if (i > vertexIndices.size()/2) change = 0.0;
+   glm::vec3 color = glm::vec3(change,change,change);
+   glm::vec3 vertex = temp_vertices[vertexIndex-1];
+
+   out_vertices.push_back(vertex);
+   out_vertices.push_back(color);
+   }
+return true;
+}
