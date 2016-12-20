@@ -1,0 +1,95 @@
+4
+Sun
+
+Diameter (km)             : 1,392,000
+Surface Temperature (C)   : 5505
+
+8
+Mercury - the closest planet to the sun             
+
+Diameter (km)               : 4879
+Gravity (m/s^2)             : 3.7
+Length of Day (hours)       : 4222.6
+Distance from Sun (10^6 km) : 57.9
+Orbital Period (days)       : 88.0
+Mean Temperature (C)        : 167
+
+8
+Venus - the hottest planet in the solar system.               
+
+Diameter (km)               : 12,104
+Gravity (m/s^2)             : 8.9
+Length of Day (hours)       : 2802.0
+Distance from Sun (10^6 km) : 108.2
+Orbital Period (days)       : 224.7
+Mean Temperature (C)        : 464
+
+8
+Earth - we live here.
+
+Diameter (km)               : 12,756
+Gravity (m/s^2)             : 9.8
+Length of Day (hours)       : 24.0
+Distance from Sun (10^6 km) : 149.6
+Orbital Period (days)       : 365.2
+Mean Temperature (C)        : 15
+
+8
+Mars - Matt Damon was here.              
+
+Diameter (km)               : 6792
+Gravity (m/s^2)             : 3.7
+Length of Day (hours)       : 24.7
+Distance from Sun (10^6 km) : 227.9
+Orbital Period (days)       : 687.0
+Mean Temperature (C)        : -65
+
+8
+Jupiter - largest planet in solar system.
+
+Diameter (km)               : 142,984
+Gravity (m/s^2)             : 23.1
+Length of Day (hours)       : 9.9
+Distance from Sun (10^6 km) : 778.6
+Orbital Period (days)       : 4331
+Mean Temperature (C)        : -110
+
+8
+Saturn - contains the most prominent ring in the solar system.
+
+Diameter (km)               : 120,536
+Gravity (m/s^2)             : 9.0
+Length of Day (hours)       : 10.7
+Distance from Sun (10^6 km) : 1433.5
+Orbital Period (days)       : 10,747
+Mean Temperature (C)        : -140
+
+8
+Uranus - rotates on its side.
+
+Diameter (km)               : 51,118
+Gravity (m/s^2)             : 8.7
+Length of Day (hours)       : 17.2
+Distance from Sun (10^6 km) : 2872.5
+Orbital Period (days)       : 30,589
+Mean Temperature (C)        : -195
+
+8
+Neptune - the only planet to be discovered through mathematical predictions
+
+Diameter (km)               : 49,528
+Gravity (m/s^2)             : 11.0
+Length of Day (hours)       : 16.1
+Distance from Sun (10^6 km) : 4495.1
+Orbital Period (days)       : 59,800
+Mean Temperature (C)        : -200
+
+8
+Pluto - not a planet anymore :(
+
+Diameter (km)               : 2370
+Gravity (m/s^2)             : 0.7
+Length of Day (hours)       : 153.3
+Distance from Sun (10^6 km) : 5906.4
+Orbital Period (days)       : 90,560
+Mean Temperature (C)        : -225

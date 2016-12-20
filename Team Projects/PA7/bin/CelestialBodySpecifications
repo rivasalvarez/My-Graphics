@@ -1,0 +1,37 @@
+// Tag: Index of body to orbit around within celestial body array in main.cpp (int), rotationSpeed (int), orbitSpeed (int), scale (float), distance from where they are orbiting (float), actual scale (float), actual distance (float)
+Sun         0   0.5   0.0    15.0   0.0    30.0     0.0      Sun.jpg       sphere.obj
+Mercury     0   0.5   3.2    1.0    30.0   0.1048   104.0    Mercury.jpeg  sphere.obj
+Venus       0  -0.5   2.5    2.3    60.0   0.2609   194.0    Venus.jpeg    sphere.obj
+Earth       0   0.5   2.0    2.5    90.0   0.2746   268.0    Earth.jpg     sphere.obj
+Mars        0   0.5   1.6    1.5    120.0  0.1457   409.0    Mars.jpeg     sphere.obj
+Jupiter     0   0.5   0.9    5.0    150.0  3.0817   1397.0   Jupiter.jpg   sphere.obj
+Saturn      0   0.5   0.6    4.5    180.0  2.5096   2563.0   Saturn.jpeg   sphere.obj
+Uranus      0   0.5   0.4    3.3    210.0  1.0117   5155.0   Uranus.jpeg   sphere.obj
+Neptune     0   0.5   0.36   3.2    240.0  0.9792   8092.0   Neptune.jpeg  sphere.obj
+Pluto       0   0.5   0.3    0.5    250.0  0.049    10620.0  Pluto.jpeg    sphere.obj
+
+Luna        3   0.05  12.0   0.5    5.0    0.1048   10.0     Mercury.jpeg  sphere.obj
+Deimos      4   0.05  15.0   0.25   5.0    0.1048   5.0      Mercury.jpeg  sphere.obj
+Phobos      4   0.05  12.0   0.4    7.0    0.0800   7.0      Mercury.jpeg  sphere.obj
+Ganymede    5   0.05  11.0   0.5    8.0    0.2048   8.0      Mercury.jpeg  sphere.obj
+Callisto    5   0.05  7.0    0.3    9.0    0.048    9.0      Mercury.jpeg  sphere.obj
+Lo          5   0.05  9.0    0.7    13.0   0.1048   13.0     Mercury.jpeg  sphere.obj
+Europa      5   0.05  8.0    0.35   15.0   0.1048   15.0     Mercury.jpeg  sphere.obj
+SaturnRing  6   0.05  0.5    3.0    0.0    2.096    0.0      Saturn.jpeg   ring.obj
+Titan       6   0.05  17.0   0.5    4.0    0.1048   4.0      Mercury.jpeg  sphere.obj
+Rhea        6   0.05  9.0    0.25   7.0    0.1248   7.0      Mercury.jpeg  sphere.obj
+Lapetus     6   0.05  7.0    0.6    11.0   0.1848   11.0     Mercury.jpeg  sphere.obj
+Dione       6   0.05  3.0    0.3    14.0   0.1548   14.0     Mercury.jpeg  sphere.obj
+Tethys      6   0.05  5.0    0.45   17.0   0.1348   17.0     Mercury.jpeg  sphere.obj
+Enceladus   6   0.05  9.0    0.2    20.0   0.1048   20.0     Mercury.jpeg  sphere.obj
+Titania     7   0.05  11.0   0.4    5.0    0.1048   5.0      Mercury.jpeg  sphere.obj
+Oberon      7   0.05  7.0    0.32   7.0    0.1048   7.0      Mercury.jpeg  sphere.obj
+Umbriel     7   0.05  9.0    0.15   9.0    0.1048   9.0      Mercury.jpeg  sphere.obj
+Ariel       7   0.05  5.0    0.2    11.0   0.1048   11.0     Mercury.jpeg  sphere.obj
+Triton      8   0.05  11.0   0.3    5.0    0.1048   5.0      Mercury.jpeg  sphere.obj
+Proteus     8   0.05  7.0    0.5    8.0    0.1648   8.0      Mercury.jpeg  sphere.obj
+Nereid      8   0.05  9.0    0.32   10.0   0.1348   10.0     Mercury.jpeg  sphere.obj
+Larissa     8   0.05  5.0    0.43   14.0   0.1748   14.0     Mercury.jpeg  sphere.obj
+Charon      9   0.05  5.0    0.1    5.0    0.025    5.0      Mercury.jpeg  sphere.obj
+Skybox      0   0.03  100    20000.0  0.0  25000.0  0.0      Stars.jpeg	   sphere.obj
+
